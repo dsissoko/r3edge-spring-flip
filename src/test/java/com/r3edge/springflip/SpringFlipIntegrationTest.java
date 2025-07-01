@@ -62,6 +62,33 @@ public class SpringFlipIntegrationTest {
     }
     
     @Test
+    void testAllToggleCombinations() {
+        // ⛔ A: false, B: false
+        setFeature("featureA", false);
+        setFeature("featureB", false);
+        assertThat(service.featureAMethod()).isNull();
+        assertThat(service.featureBMethod()).isNull();
+
+        // ✅ A: true, B: false
+        setFeature("featureA", true);
+        setFeature("featureB", false);
+        assertThat(service.featureAMethod()).isEqualTo("A OK");
+        assertThat(service.featureBMethod()).isNull();
+
+        // ✅ A: false, B: true
+        setFeature("featureA", false);
+        setFeature("featureB", true);
+        assertThat(service.featureAMethod()).isNull();
+        assertThat(service.featureBMethod()).isEqualTo("B OK");
+
+        // ✅✅ A: true, B: true
+        setFeature("featureA", true);
+        setFeature("featureB", true);
+        assertThat(service.featureAMethod()).isEqualTo("A OK");
+        assertThat(service.featureBMethod()).isEqualTo("B OK");
+    }
+    
+    @Test
     void shouldNotInjectFlippedBean() {
         assertThat(flippedBean).isNull(); // car greeting=false
     }
@@ -111,33 +138,6 @@ public class SpringFlipIntegrationTest {
     private void setFeature(String key, boolean value) {
         System.setProperty("r3edge.spring.flip." + key, String.valueOf(value));
         contextRefresher.refresh();
-    }
-
-    @Test
-    void testAllToggleCombinations() {
-        // ⛔ A: false, B: false
-        setFeature("featureA", false);
-        setFeature("featureB", false);
-        assertThat(service.featureAMethod()).isNull();
-        assertThat(service.featureBMethod()).isNull();
-
-        // ✅ A: true, B: false
-        setFeature("featureA", true);
-        setFeature("featureB", false);
-        assertThat(service.featureAMethod()).isEqualTo("A OK");
-        assertThat(service.featureBMethod()).isNull();
-
-        // ✅ A: false, B: true
-        setFeature("featureA", false);
-        setFeature("featureB", true);
-        assertThat(service.featureAMethod()).isNull();
-        assertThat(service.featureBMethod()).isEqualTo("B OK");
-
-        // ✅✅ A: true, B: true
-        setFeature("featureA", true);
-        setFeature("featureB", true);
-        assertThat(service.featureAMethod()).isEqualTo("A OK");
-        assertThat(service.featureBMethod()).isEqualTo("B OK");
     }
 
 }
