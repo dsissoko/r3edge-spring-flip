@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Écoute les changements d'environnement Spring Cloud et logge l'état des toggles.
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -15,6 +18,11 @@ public class SpringFlipCloudConfigToggleLogger implements ApplicationListener<En
 
 	private final Environment env;
 
+    /**
+     * Méthode appelée lors d'un changement d'environnement.
+     *
+     * @param event événement de changement
+     */
 	@Override
 	public void onApplicationEvent(EnvironmentChangeEvent event) {
 		event.getKeys().stream().filter(key -> key.startsWith("spring.flip.")).forEach(key -> {

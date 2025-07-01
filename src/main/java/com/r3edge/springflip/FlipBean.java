@@ -15,8 +15,10 @@ import org.springframework.context.annotation.Conditional;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Conditional(FlipBeanCondition.class)
 public @interface FlipBean {
-	/**
-	 * Nom du toggle à vérifier.
-	 */
+    /**
+     * Nom du toggle à vérifier.
+     *
+     * @return le nom du toggle
+     */
 	String value();
 }

@@ -12,8 +12,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface FlipMethod {
-	/**
-	 * Nom du toggle à vérifier.
-	 */
+    /**
+     * Nom du toggle à vérifier.
+     *
+     * @return le nom du toggle
+     */
 	String value();
 }

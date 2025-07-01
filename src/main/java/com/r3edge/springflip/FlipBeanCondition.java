@@ -9,6 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FlipBeanCondition implements Condition {
 
+
+    /**
+     * Évalue si le toggle est activé.
+     *
+     * @param context contexte Spring
+     * @param metadata métadonnées de l’annotation
+     * @return true si activé, sinon false
+     */
 	@Override
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		// Récupère le nom du toggle depuis l'annotation
