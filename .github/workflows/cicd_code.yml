@@ -1,4 +1,4 @@
-name: Build and Test - r3edge-task-dispatcher
+name: Build and Test - r3edge-spring-flip
 
 on:
   push:
