@@ -30,6 +30,9 @@ public class SpringFlipIntegrationTest {
 	
 	@Autowired
 	private BeanWithFlippedMethod beanWithFlippedMethod;
+	
+    @Autowired
+    private MultiFeatureService service;
 
 	@Test
 	void shouldLoadFeaturesFromYaml() {
@@ -74,4 +77,67 @@ public class SpringFlipIntegrationTest {
         String result = beanWithFlippedMethod.unconditional();
         assertThat(result).isEqualTo("always-on");
     }
+    
+    @Test
+    void shouldFlipAndUnflipMethodAtRuntime() {
+        // Au démarrage : greeting = false
+        log.info("Initial state: {}", flipConfiguration.getFlip());
+        assertThat(flipConfiguration.getFlip().get("greeting")).isFalse();
+
+        // Appel 1 → intercepté
+        String firstCall = beanWithFlippedMethod.conditional();
+        log.info("First call (disabled): {}", firstCall);
+        assertThat(firstCall).isNull();
+
+        // 🔁 Flip ON à chaud
+        System.setProperty("r3edge.spring.flip.greeting", "true");
+        contextRefresher.refresh();
+
+        // Appel 2 → méthode activée
+        String secondCall = beanWithFlippedMethod.conditional();
+        log.info("Second call (enabled): {}", secondCall);
+        assertThat(secondCall).isEqualTo("flip-method active");
+
+        // 🔁 Flip OFF à chaud
+        System.setProperty("r3edge.spring.flip.greeting", "false");
+        contextRefresher.refresh();
+
+        // Appel 3 → méthode désactivée à nouveau
+        String thirdCall = beanWithFlippedMethod.conditional();
+        log.info("Third call (disabled again): {}", thirdCall);
+        assertThat(thirdCall).isNull();
+    }
+    
+    private void setFeature(String key, boolean value) {
+        System.setProperty("r3edge.spring.flip." + key, String.valueOf(value));
+        contextRefresher.refresh();
+    }
+
+    @Test
+    void testAllToggleCombinations() {
+        // ⛔ A: false, B: false
+        setFeature("featureA", false);
+        setFeature("featureB", false);
+        assertThat(service.featureAMethod()).isNull();
+        assertThat(service.featureBMethod()).isNull();
+
+        // ✅ A: true, B: false
+        setFeature("featureA", true);
+        setFeature("featureB", false);
+        assertThat(service.featureAMethod()).isEqualTo("A OK");
+        assertThat(service.featureBMethod()).isNull();
+
+        // ✅ A: false, B: true
+        setFeature("featureA", false);
+        setFeature("featureB", true);
+        assertThat(service.featureAMethod()).isNull();
+        assertThat(service.featureBMethod()).isEqualTo("B OK");
+
+        // ✅✅ A: true, B: true
+        setFeature("featureA", true);
+        setFeature("featureB", true);
+        assertThat(service.featureAMethod()).isEqualTo("A OK");
+        assertThat(service.featureBMethod()).isEqualTo("B OK");
+    }
+
 }

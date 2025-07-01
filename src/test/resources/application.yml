@@ -3,3 +3,5 @@ r3edge:
     # --- Feature Toggle (SpringFlip) ---
     flip:
       greeting: false
+      featureA: false
+      featureB: false      
