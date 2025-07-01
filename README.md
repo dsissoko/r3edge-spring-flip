@@ -1,6 +1,6 @@
 # r3edge-spring-flip | ![Logo](logo_ds.png)
 
-Librairie Spring Boot pour **activer ou désactiver dynamiquement des fonctionnalités** (feature toggles) à chaud, via configuration centralisée (ex : Spring Config Server).  
+Librairie Spring et spring Boot pour **activer ou désactiver dynamiquement des fonctionnalités** (feature toggles) à chaud, via configuration centralisée (ex : Spring Config Server).  
 Permet de conditionner l'exécution de méthodes ou de beans sans redémarrage du système, avec une intégration élégante et peu invasive.
 
 ---
