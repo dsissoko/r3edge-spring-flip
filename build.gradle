@@ -119,6 +119,18 @@ publishing {
 
             from components.java
 
+            pom {
+                name = 'r3edge-spring-flip'
+                description = 'Un microframework Spring Boot pour activer ou désactiver des fonctionnalités dynamiquement à l’aide de toggles déclaratifs.'
+                url = 'https://github.com/dsissoko/r3edge-spring-flip'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+            }
+
             versionMapping {
                 usage('java-api') {
                     fromResolutionResult()
@@ -129,28 +141,19 @@ publishing {
             }
         }
     }
+
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/${project.findProperty('gpr.user') ?: 'DefaultGitHubUser'}/${project.name}")
+            url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USER")
                 password = project.findProperty("gpr.key") ?: System.getenv("TWEAKED_PAT")
             }
         }
-        maven {
-            name = "Buildkite"
-            url = uri("https://packages.buildkite.com/r3edge/r3edge-libs/maven2/")
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-            credentials(HttpHeaderCredentials) {
-                name = "Authorization"
-                value = "Bearer ${project.findProperty('BK_TOKEN') ?: System.getenv('BK_TOKEN')}"
-            }
-        }
     }
 }
+
 
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << "-parameters"
