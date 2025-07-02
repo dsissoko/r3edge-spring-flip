@@ -34,7 +34,9 @@ public class FlipBeanCondition implements Condition {
 		String toggleName = (String) metadata.getAnnotationAttributes(FlipBean.class.getName()).get("value");
 
 		// Lit la valeur du toggle dans l'environnement (par défaut : false)
-		String toggleValue = context.getEnvironment().getProperty("spring.flip." + toggleName);
+		// NOTE: Cette approche ne permet pas le rechargement à chaud des beans
+		// car la condition est évaluée à l'initialisation du contexte Spring.
+		String toggleValue = context.getEnvironment().getProperty("r3edge.spring.flip." + toggleName);
 		boolean isEnabled = Boolean.parseBoolean(toggleValue != null ? toggleValue : "false");
 
 		// Logge l'état du toggle en mode debug (pratique pour le débogage)

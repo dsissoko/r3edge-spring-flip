@@ -23,8 +23,8 @@ Définition centralisée via Spring Config :
 
 ```yaml
 r3edge:
-  features:
-    toggles:
+  spring:
+    flip:
       my-feature-key: true
       another-experimental-feature: false
 ```
