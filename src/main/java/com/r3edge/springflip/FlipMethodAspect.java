@@ -38,6 +38,7 @@ public class FlipMethodAspect {
             return joinPoint.proceed();
         } else {
             log.debug("⛔ Feature '{}' is DISABLED → skipping: {}", toggleName, joinPoint.getSignature());
+         // TODO: revoir gestion fallback future
             return null; // ou un fallback configurable si tu le souhaites plus tard
         }
     }
