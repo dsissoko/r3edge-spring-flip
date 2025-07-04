@@ -3,6 +3,7 @@ package com.r3edge.springflip;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @see org.springframework.boot.context.properties.ConfigurationProperties
  */
+@RefreshScope
 @ConfigurationProperties(prefix = "r3edge.spring")
 @Slf4j
 public class FlipConfiguration {
