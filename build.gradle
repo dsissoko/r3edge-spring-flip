@@ -147,8 +147,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
             credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USER")
-                password = project.findProperty("gpr.key") ?: System.getenv("TWEAKED_PAT")
+              username = System.getenv("GITHUB_ACTOR")
+              password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
