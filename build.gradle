@@ -37,10 +37,19 @@ dependencyManagement {
     }
 }
 
+// Au sommet de build.gradle
+def ghUser = project.findProperty('gpr.user') 
+             ?: System.getenv('GPR_USER') 
+             ?: System.getenv('GITHUB_ACTOR')
+def ghKey  = project.findProperty('gpr.key')  
+             ?: System.getenv('GPR_KEY')  
+             ?: System.getenv('GITHUB_TOKEN')
+
+
 repositories {
     mavenCentral()
     mavenLocal()
-    gradlePluginPortal()
+    gradlePluginPortal()    
 }
 
 dependencies {
@@ -147,8 +156,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
             credentials {
-              username = System.getenv("GITHUB_ACTOR")
-              password = System.getenv("GITHUB_TOKEN")
+                username = ghUser
+                password = ghKey
             }
         }
     }
