@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.r3edge'
-version = '0.0.3'
+version = '0.0.4'
 
 base {
     archivesName = 'r3edge-spring-flip'
@@ -146,10 +146,6 @@ publishing {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USER")
-                password = project.findProperty("gpr.key") ?: System.getenv("TWEAKED_PAT")
-            }
         }
     }
 }
