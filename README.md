@@ -72,17 +72,120 @@ Une interface SPI permet d’ajouter des stratégies personnalisées (par utilis
 
 ---
 
+## 📦 Compatibilité
+
+✅ Testée avec :  
+- **Spring Boot** `3.5.3`  
+- **Spring Cloud** `2025.0.0`  
+- **Java** `17` et `21`
+
+🧘 Lib légère, sans dépendance transitive aux starters : fonctionne avec toute stack Spring moderne.  
+Pas de `fat-jar`, pas de verrouillage.
+
+---
+
+
 ## 🚀 Intégration
 
-Ajoutez la dépendance dans votre projet (exemple avec Gradle) :
+La lib est distribuée via GitHub Packages. Cette fonctionnalité manque encore un peu de maturité, voici la procédure “no-brain” pour intégrer **r3edge-spring-flip** (Gradle) en local comme en CI/CD.
+
+### 1. Configurez votre PAT
+
+**En local** (dans votre gradle.properties) :
+
+```properties
+# pour GitHub Packages (Maven)
+gpr.user=votre_github_user_name
+gpr.key=ghp_votrepat_read:packages
+
+# pour récupérer des dépendances via buildkit
+BK_TOKEN=bkpt_votretokenbuildkit
+```
+
+**ou** dans les secrets CI (GPR_KEY) :
+
+```
+GPR_KEY=ghp_votrepat_read:packages
+```
+
+### 2. Déclarer le dépôt et la dépendance dans votre `build.gradle`
 
 ```groovy
+
+repositories {
+  mavenCentral()
+  maven {
+    url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
+    credentials {
+      username = project.findProperty("gpr.user")
+                 ?: System.getenv("GPR_USER")
+                 ?: System.getenv("GITHUB_ACTOR")
+      password = project.findProperty("gpr.key")
+                 ?: System.getenv("GPR_KEY")
+                 ?: System.getenv("GITHUB_TOKEN")
+    }
+  }
+}
+
 dependencies {
-    implementation "com.r3edge:spring-flip:1.0.0"
+  implementation "com.r3edge:r3edge-spring-flip:0.0.7"
 }
 ```
 
-Assurez-vous d'activer `Spring Cloud Config` et `@RefreshScope` dans vos beans.
+### 3. Exemple de CI pour GitHub Actions
+
+```yaml
+name: CI – Build & Publish
+
+on:
+  push:
+    branches: 
+      - main
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read     # checkout + lecture de code
+  packages: write    # nécessaire pour read & write packages
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    
+    env:
+      GPR_USER: ${{ secrets.GPR_USER }}
+      GPR_KEY:  ${{ secrets.GPR_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Build and Test
+        run: ./gradlew clean build --no-daemon
+
+      - name: Publish to GitHub Packages
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./gradlew publish --no-daemon
+
+```
+
+### 4. Lancez votre build
+
+```bash
+./gradlew clean build
+```
 
 ---
 
