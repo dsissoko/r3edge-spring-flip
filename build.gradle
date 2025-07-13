@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.r3edge'
-version = '0.0.8'
+version = '0.0.9'
 
 base {
     archivesName = 'r3edge-spring-flip'
@@ -56,6 +56,7 @@ dependencies {
     // Spring minimum requis pour la lib
     compileOnly 'org.springframework.cloud:spring-cloud-context:4.3.0'
     // Facilité Spring pour déclarer l’aspect via @Aspect
+    api 'org.aspectj:aspectjweaver'
     api 'org.springframework.boot:spring-boot-starter-aop'
     //compileOnly  'org.springframework.boot:spring-boot-starter-aop'
     compileOnly  'org.springframework.boot:spring-boot-starter'
