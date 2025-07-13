@@ -37,7 +37,7 @@ public class FlipMethodAspect {
             log.debug("✅ Feature '{}' is ENABLED → executing: {}", toggleName, joinPoint.getSignature());
             return joinPoint.proceed();
         } else {
-            log.debug("⛔ Feature '{}' is DISABLED → skipping: {}", toggleName, joinPoint.getSignature());
+            log.warn("⛔ Feature '{}' is DISABLED → skipping: {}", toggleName, joinPoint.getSignature());
          // TODO: revoir gestion fallback future
             return null; // ou un fallback configurable si tu le souhaites plus tard
         }
