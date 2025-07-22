@@ -91,18 +91,15 @@ La lib est distribuée via GitHub Packages. Cette fonctionnalité manque encore 
 
 ### 1. Configurez votre PAT
 
-**En local** (dans votre gradle.properties) :
+**En local** (dans votre gradle.properties non versionné) :
 
 ```properties
 # pour GitHub Packages (Maven)
 gpr.user=votre_github_user_name
 gpr.key=ghp_votrepat_read:packages
-
-# pour récupérer des dépendances via buildkit
-BK_TOKEN=bkpt_votretokenbuildkit
 ```
 
-**ou** dans les secrets CI (GPR_KEY) :
+**ou** dans les secrets GITHUB pour du CI (car votre .properties ne doit pas être versionné):
 
 ```
 GPR_KEY=ghp_votrepat_read:packages
@@ -111,7 +108,6 @@ GPR_KEY=ghp_votrepat_read:packages
 ### 2. Déclarer le dépôt et la dépendance dans votre `build.gradle`
 
 ```groovy
-
 repositories {
   mavenCentral()
   maven {
@@ -128,7 +124,8 @@ repositories {
 }
 
 dependencies {
-  implementation "com.r3edge:r3edge-spring-flip:0.0.7"
+    implementation "com.r3edge:r3edge-spring-flip:0.1.1"
+    implementation "org.springframework.boot:spring-boot-starter"
 }
 ```
 
@@ -189,7 +186,18 @@ jobs:
 
 ---
 
-## 📌 Exemple complet
+## 📌 Exemple sur une méthode
+
+déclarer les features dans le yaml de config (en local ou dans une repogit servie par spring config server):
+
+```
+r3edge:
+  spring:
+    # --- Feature Toggle (SpringFlip) ---
+    flip:
+      strategy.enable.short-selling: false
+```    
+      
 
 ```java
 @Component
@@ -200,16 +208,6 @@ public class TradingStrategyService {
         // Code conditionnel à l’activation de la vente à découvert
     }
 }
-```
-
----
-
-## 🧪 Tests
-
-Les features peuvent être forcées en test via une configuration de profil ou un mock du registry :
-
-```java
-featureRegistry.enable("strategy.enable.short-selling");
 ```
 
 ---
