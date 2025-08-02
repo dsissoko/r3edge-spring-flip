@@ -93,7 +93,7 @@ public class BeanWithFlippedMethod {
 }
 ```
 
-> ℹ️ LEs annotations sont évaluées au runtime via AOP et prennent en compte les mises à jour de configuration à chaud  
+> ℹ️ Les annotations sont évaluées au runtime via AOP et prennent en compte les mises à jour de configuration à chaud  
 
 | Cas                               | Effet                                         |
 |----------------------------------|-----------------------------------------------|
