@@ -126,4 +126,6 @@ public class BeanWithFlippedMethod {
 
 ---
 
+📫 Maintenu par [@dsissoko](https://github.com/dsissoko) – contributions bienvenues.
+
 [![Build and Test - r3edge-spring-flip](https://github.com/dsissoko/r3edge-spring-flip/actions/workflows/cicd_code.yml/badge.svg)](https://github.com/dsissoko/r3edge-spring-flip/actions/workflows/cicd_code.yml)
