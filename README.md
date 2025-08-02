@@ -1,25 +1,65 @@
 # r3edge-spring-flip | ![Logo](logo_ds.png)
 
-Librairie Spring et spring Boot pour **activer ou désactiver dynamiquement des fonctionnalités** (feature toggles) à chaud, via configuration centralisée (ex : Spring Config Server).  
-Permet de conditionner l'exécution de méthodes ou de beans sans redémarrage du système, avec une intégration élégante et peu invasive.
+Librairie spring Boot de feature togggle déclarative. **Activer ou désactiver dynamiquement des fonctionnalités** (feature toggles) en mettant à jour le fichier application.yml de votre microservice ou de votre web app. Toogle de Bean avec **@FlibBean("feature1")** ou de méthode avec **@FlibMethod("feature2")**.
+
+> 🚀 Pourquoi adopter `r3edge-spring-flip` ?
+>
+> ✅ 1 **API triviale** : Définissez vos feature en YAML, Annoter vos bean et vos méthodes flippables.  
+> ✅ **Hot reload** des features  
+> ✅ 100 % compatible **Spring Boot 3.x**  
+
+This project is documented in French 🇫🇷 by default.  
+An auto-translated English version is available here:
+
+[👉 English (auto-translated by Google)](https://translate.google.com/translate?sl=auto&tl=en&u=https://github.com/dsissoko/r3edge-task-dispatcher)
 
 ---
 
-## ✅ Fonctionnalités
+## 📋 Fonctionnalités clés
 
-- Définition de **features** dans un fichier de configuration
-- Annotation simple pour conditionner l'exécution de méthodes
-- Evaluation dynamique à chaud (hot-refresh)
-- Intégration fluide avec Spring Cloud Config + Bus
-- Compatible avec des profils, environnements, stratégies custom
-- Support de **feature flipping** sans besoin de champ `boolean`
-- 📜 Documentation et audit possible via une interface dédiée (future UI)
+- ✅ Définition de **features** dans un fichier de configuration yml
+- ✅ Annotation simple pour conditionner l'exécution de méthodes ou l'activation des beans
+- ✅ Support du **@RefreshScope** des features (Config Server + Spring Cloud Bus)
+- ✅ Intégration fluide avec Spring Cloud Config + Bus
 
 ---
 
-## 🔧 Déclaration d'une feature (YAML)
+## ⚙️ Intégration rapide
 
-Définition centralisée via Spring Config :
+### Ajouter les dépendances nécessaires:
+
+```groovy
+repositories {
+    mavenCentral()
+    // Dépôt GitHub Packages de r3edge-spring-flip
+    maven {
+        url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
+        credentials {
+            username = ghUser
+            password = ghKey
+        }
+    }
+    mavenLocal()
+}
+
+dependencies {
+    ....
+    implementation "com.r3edge:r3edge-spring-flip:0.1.1"
+    implementation "org.springframework.boot:spring-boot-starter"
+    ...
+}
+```
+
+> ⚠️ Cette librairie est publiée sur **GitHub Packages**: Même en open source, **GitHub impose une authentification** pour accéder aux dépendances.  
+> Il faudra donc valoriser ghUser et ghKey dans votre gradle.properties:
+
+```properties
+#pour réccupérer des packages github 
+ghUser=your_github_user
+ghKey=github_token_with_read_package_scope
+```
+
+### Déclarez vos features dans la configuration yaml de votre microservice:
 
 ```yaml
 r3edge:
@@ -29,33 +69,31 @@ r3edge:
       another-experimental-feature: false
 ```
 
-| Clé Feature                  | Description                                 |
-|-----------------------------|---------------------------------------------|
-| `my-feature-key`            | Nom logique de la feature toggle            |
-| `true` / `false`            | Active (`true`) ou désactive (`false`)      |
-
 ---
 
-## 🧩 Activation via annotation
-
-Annotez vos méthodes ou beans avec `@ConditionalOnFeature` :
+### Annotez vos méthodes ou beans:
 
 ```java
-@ConditionalOnFeature("my-feature-key")
-public void someExperimentalMethod() {
-    // code exécuté uniquement si la feature est active
+package com.r3edge.springflip;
+
+import org.springframework.stereotype.Component;
+
+@FlipBean("FlippableBean")
+@Component
+public class BeanWithFlippedMethod {
+
+    @FlipMethod("FlippableMethod")
+    public String conditional() {
+        return "flip-method active";
+    }
+
+    public String unconditional() {
+        return "always-on";
+    }
 }
 ```
 
-Cette annotation est évaluée dynamiquement et prend en compte les mises à jour de configuration à chaud.
-
----
-
-## 🔁 Mise à jour à chaud
-
-Compatible avec Spring Cloud Bus, les modifications apportées dans le Config Server peuvent être propagées immédiatement.
-
-### Exemples :
+> ℹ️ LEs annotations sont évaluées au runtime via AOP et prennent en compte les mises à jour de configuration à chaud  
 
 | Cas                               | Effet                                         |
 |----------------------------------|-----------------------------------------------|
@@ -65,154 +103,22 @@ Compatible avec Spring Cloud Bus, les modifications apportées dans le Config Se
 
 ---
 
-## 🧠 Architecture interne
-
-Chaque appel passe par un **resolver centralisé** qui interroge le `FeatureRegistry`.  
-Une interface SPI permet d’ajouter des stratégies personnalisées (par utilisateur, profil, date...).
-
----
-
-## 📦 Compatibilité
+## 📦 Stack de référence
 
 ✅ Testée avec :  
 - **Spring Boot** `3.5.3`  
 - **Spring Cloud** `2025.0.0`  
 - **Java** `17` et `21`
 
-🧘 Lib légère, sans dépendance transitive aux starters : fonctionne avec toute stack Spring moderne.  
-Pas de `fat-jar`, pas de verrouillage.
-
----
-
-
-## 🚀 Intégration
-
-La lib est distribuée via GitHub Packages. Cette fonctionnalité manque encore un peu de maturité, voici la procédure “no-brain” pour intégrer **r3edge-spring-flip** (Gradle) en local comme en CI/CD.
-
-### 1. Configurez votre PAT
-
-**En local** (dans votre gradle.properties non versionné) :
-
-```properties
-# pour GitHub Packages (Maven)
-gpr.user=votre_github_user_name
-gpr.key=ghp_votrepat_read:packages
-```
-
-**ou** dans les secrets GITHUB pour du CI (car votre .properties ne doit pas être versionné):
-
-```
-GPR_KEY=ghp_votrepat_read:packages
-```
-
-### 2. Déclarer le dépôt et la dépendance dans votre `build.gradle`
-
-```groovy
-repositories {
-  mavenCentral()
-  maven {
-    url = uri("https://maven.pkg.github.com/dsissoko/r3edge-spring-flip")
-    credentials {
-      username = project.findProperty("gpr.user")
-                 ?: System.getenv("GPR_USER")
-                 ?: System.getenv("GITHUB_ACTOR")
-      password = project.findProperty("gpr.key")
-                 ?: System.getenv("GPR_KEY")
-                 ?: System.getenv("GITHUB_TOKEN")
-    }
-  }
-}
-
-dependencies {
-    implementation "com.r3edge:r3edge-spring-flip:0.1.1"
-    implementation "org.springframework.boot:spring-boot-starter"
-}
-```
-
-### 3. Exemple de CI pour GitHub Actions
-
-```yaml
-name: CI – Build & Publish
-
-on:
-  push:
-    branches: 
-      - main
-    tags:
-      - 'v*.*.*'
-  pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: read     # checkout + lecture de code
-  packages: write    # nécessaire pour read & write packages
-
-jobs:
-  build-and-publish:
-    runs-on: ubuntu-latest
-    
-    env:
-      GPR_USER: ${{ secrets.GPR_USER }}
-      GPR_KEY:  ${{ secrets.GPR_KEY }}
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-
-      - name: Build and Test
-        run: ./gradlew clean build --no-daemon
-
-      - name: Publish to GitHub Packages
-        if: startsWith(github.ref, 'refs/tags/')
-        run: ./gradlew publish --no-daemon
-
-```
-
-### 4. Lancez votre build
-
-```bash
-./gradlew clean build
-```
-
----
-
-## 📌 Exemple sur une méthode
-
-déclarer les features dans le yaml de config (en local ou dans une repogit servie par spring config server):
-
-```
-r3edge:
-  spring:
-    # --- Feature Toggle (SpringFlip) ---
-    flip:
-      strategy.enable.short-selling: false
-```    
-      
-
-```java
-@Component
-public class TradingStrategyService {
-
-    @ConditionalOnFeature("strategy.enable.short-selling")
-    public void evaluateShortEntry() {
-        // Code conditionnel à l’activation de la vente à découvert
-    }
-}
-```
-
 ---
 
 ## 📦 Roadmap
+
+### 🔧 À venir
+
+- RAS
+
+### 🧠 En réflexion
 
 - [ ] UI d’administration des toggles (avec WebSocket + Spring Actuator)
 - [ ] Annotations alternatives comme `@FeatureToggle("key")`
