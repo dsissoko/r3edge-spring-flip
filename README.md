@@ -65,8 +65,8 @@ ghKey=github_token_with_read_package_scope
 r3edge:
   spring:
     flip:
-      my-feature-key: true
-      another-experimental-feature: false
+      bean1: true
+      method1: true
 ```
 
 ---
@@ -74,26 +74,53 @@ r3edge:
 ### Annotez vos méthodes ou beans:
 
 ```java
-package com.r3edge.springflip;
+package com.example.demo;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@FlipBean("FlippableBean")
-@Component
-public class BeanWithFlippedMethod {
+import com.r3edge.springflip.FlipBean;
+import com.r3edge.springflip.FlipMethod;
 
-    @FlipMethod("FlippableMethod")
-    public String conditional() {
-        return "flip-method active";
-    }
+import lombok.extern.slf4j.Slf4j;
 
-    public String unconditional() {
-        return "always-on";
+@Service
+@FlipBean("bean1")
+@Slf4j
+public class FlippableBeanWithFlippableMethods {
+
+    @FlipMethod("method1")
+    public void flippableMethod(String data) {
+        log.info("{} : No, im not flipped", data);
     }
 }
 ```
 
+> **Deux postures :**
+>
+> - **Fail Fast** 🚨 : Crash immédiat si une feature flippée est absente.
+>   ```java
+>   @Autowired
+>   private FlippableBeanWithFlippableMethods bean1;
+>   // Crash si feature désactivée
+>   bean1.flippableVoid("critical");
+>   String res = bean1.flippableObject("critical"); // Crash si bean absent
+>   ```
+>
+> - **Feature Aware** 🛡️ : Code robuste, fonctionne même si la feature est absente.
+>   ```java
+>   private final Optional<FlippableBeanWithFlippableMethods> bean1;
+>   // Pas de crash, exécution conditionnelle
+>   bean1.ifPresent(b -> b.flippableVoid("optional"));
+>   // Pour une méthode qui retourne une valeur :
+>   String res = bean1.map(b -> b.flippableObject("optional")).orElse(null);
+>   ```
+>
+> 🟢 **r3edge-spring-flip supporte les deux !**
+
+
 > ℹ️ Les annotations sont évaluées au runtime via AOP et prennent en compte les mises à jour de configuration à chaud  
+
+
 
 | Cas                               | Effet                                         |
 |----------------------------------|-----------------------------------------------|
