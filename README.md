@@ -97,16 +97,16 @@ public class FlippableBeanWithFlippableMethods {
 
 > **Deux postures :**
 >
-> - **Fail Fast** 🚨 : Crash immédiat si une feature flippée est absente.
+> - **Fail Fast** 🚨 : Crash immédiat si une feature flippée est absente: les dev ne peuvent pas utiliser les features flippées
 >   ```java
 >   @Autowired
 >   private FlippableBeanWithFlippableMethods bean1;
->   // Crash si feature désactivée
+>   // Crash si bean1 désactivé
 >   bean1.flippableVoid("critical");
->   String res = bean1.flippableObject("critical"); // Crash si bean absent
+>   String res = bean1.flippableObject("critical"); // Crash si méthode désactivée
 >   ```
 >
-> - **Feature Aware** 🛡️ : Code robuste, fonctionne même si la feature est absente.
+> - **Feature Aware** 🛡️ : Code robuste, fonctionne même si la feature est absente: les dev doivent coder le comportement en cas de feature flippée
 >   ```java
 >   private final Optional<FlippableBeanWithFlippableMethods> bean1;
 >   // Pas de crash, exécution conditionnelle
