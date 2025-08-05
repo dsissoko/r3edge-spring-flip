@@ -38,8 +38,30 @@ public class FlipMethodAspect {
             return joinPoint.proceed();
         } else {
             log.warn("⛔ Feature '{}' is DISABLED → skipping: {}", toggleName, joinPoint.getSignature());
-         // TODO: revoir gestion fallback future
-            return null; // ou un fallback configurable si tu le souhaites plus tard
+
+            Class<?> returnType = ((org.aspectj.lang.reflect.MethodSignature) joinPoint.getSignature())
+                    .getMethod().getReturnType();
+
+            if (returnType.isPrimitive()) {
+                Object fallback = getDefaultValueFor(returnType);
+                log.warn("🟡 Méthode retourne un primitif : fallback = {}", fallback);
+                return fallback;
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * Retourne une valeur par défaut pour un type primitif.
+     * Exemple : 0 pour int, false pour boolean, etc.
+     */
+    private static Object getDefaultValueFor(Class<?> returnType) {
+        try {
+            return java.lang.reflect.Array.get(java.lang.reflect.Array.newInstance(returnType, 1), 0);
+        } catch (Exception e) {
+            log.error("❌ Impossible de créer fallback pour type primitif {}", returnType, e);
+            return null;
         }
     }
 }
