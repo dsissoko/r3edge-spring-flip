@@ -147,8 +147,7 @@ public class FlippableBeanWithFlippableMethods {
 
 ### 🧠 En réflexion
 
-- [ ] UI d’administration des toggles (avec WebSocket + Spring Actuator)
-- [ ] Annotations alternatives comme `@FeatureToggle("key")`
+- [ ] UI d’administration des toggles
 - [ ] Historisation des activations par utilisateur / environnement
 
 ---
